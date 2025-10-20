@@ -96,8 +96,12 @@
 
             // Получаем дополнительные данные через API
             fetch(`/api/user-profile?user_id=${user.id}`)
-                .then(response => response.json())
+                .then(response => {
+                    console.log('API Response status:', response.status);
+                    return response.json();
+                })
                 .then(data => {
+                    console.log('API Response data:', data);
                     if (!data.error) {
                         // Обновляем данные из базы данных
                         document.getElementById('userAge').textContent = data.age;
@@ -111,13 +115,13 @@
                     } else {
                         console.log('API Error:', data.error);
                         // Оставляем значения по умолчанию
-                        document.getElementById('userRegistrationDate').textContent = 'Загрузка...';
+                        document.getElementById('userRegistrationDate').textContent = 'Ошибка загрузки';
                     }
                 })
                 .catch(error => {
                     console.log('API request failed:', error);
                     // Оставляем значения по умолчанию
-                    document.getElementById('userRegistrationDate').textContent = 'Загрузка...';
+                    document.getElementById('userRegistrationDate').textContent = 'Ошибка загрузки';
                 });
         } else {
             document.getElementById('userName').textContent = 'Пользователь не найден';

@@ -1,13 +1,55 @@
 {
   "123456789": {
-    "name": "Тестовый Пользователь",
-    "username": "testuser",
+    "name": "Test User",
     "age": 25,
-    "city": "Москва",
-    "registration_date": "2024-01-15T10:30:00Z",
+    "city": "Test City",
     "setup_completed": true,
-    "total_reports": 15,
-    "active_reports": 3,
-    "resolved_reports": 12
+    "updates_enabled": true,
+    "changes_enabled": false,
+    "promo_enabled": true
+  },
+  "349746155": {
+    "name": "Павлик",
+    "age": 24,
+    "city": "Лобня",
+    "updates_enabled": true,
+    "changes_enabled": true,
+    "promo_enabled": true,
+    "setup_completed": true,
+    "registration_date": "1760785210",
+    "username": "pavel",
+    "streaming_enabled": false,
+    "markdown_enabled": true,
+    "last_message": "Привет",
+    "places_settings": {
+      "categories": {
+        "shops": false,
+        "food": false,
+        "attractions": false,
+        "health": false,
+        "finance": false
+      },
+      "show_distance": true
+    }
+  },
+  "7706896737": {
+    "name": "Павел",
+    "updates_enabled": true,
+    "changes_enabled": true,
+    "promo_enabled": true,
+    "setup_completed": true,
+    "registration_date": "1760785347"
+  },
+  "12345": {
+    "places_settings": {
+      "categories": {
+        "shops": false,
+        "food": true,
+        "attractions": true,
+        "health": false,
+        "finance": false
+      },
+      "show_distance": true
+    }
   }
 }
