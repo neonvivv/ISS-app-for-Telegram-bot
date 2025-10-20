@@ -14,12 +14,13 @@
    - `styles.css`
    - `requirements.txt`
    - `runtime.txt`
+   - `Procfile` (для production deployment)
 
 3. **Создайте новый Web Service**:
    - Выберите репозиторий на GitHub
    - **Environment**: Python 3
    - **Build Command**: `pip install -r requirements.txt`
-   - **Start Command**: `python app.py`
+   - **Start Command**: `gunicorn app:app` (или оставьте пустым, если есть Procfile)
 
 4. **Получите URL** типа: `https://your-app.onrender.com`
 
@@ -76,6 +77,23 @@ Mini App автоматически получает данные пользов
   "resolved_reports": 12
 }
 ```
+
+## 🐛 Troubleshooting
+
+### Проблемы с портами на Render.com
+Если видите "No open ports detected":
+- Убедитесь, что приложение слушает на `0.0.0.0`
+- Используйте переменную окружения `PORT` для указания порта
+- Используйте Gunicorn вместо Flask development сервера
+
+### Development vs Production
+- **Development**: `python app.py` (только для локального тестирования)
+- **Production**: `gunicorn app:app` (рекомендуется для Render.com)
+
+### CORS ошибки
+Если Mini App не может получить данные:
+- Проверьте, что `flask-cors` установлен
+- Убедитесь, что API endpoint возвращает правильные CORS headers
 
 ## 📋 Требования
 

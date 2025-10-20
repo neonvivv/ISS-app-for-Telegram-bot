@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 import json
 import os
@@ -6,7 +6,9 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-app = Flask(__name__)
+app = Flask(__name__,
+            static_folder='.',
+            static_url_path='')
 CORS(app)  # Разрешаем CORS для всех доменов
 
 # Путь к файлу с данными пользователей
@@ -61,12 +63,20 @@ def get_user_profile():
 @app.route('/')
 def index():
     """Отдаем статический HTML файл"""
-    return app.send_static_file('index.html')
+    return send_from_directory('.', 'index.html')
 
 @app.route('/styles.css')
 def styles():
     """Отдаем CSS файл"""
-    return app.send_static_file('styles.css')
+    return send_from_directory('.', 'styles.css')
+
+@app.route('/<path:path>')
+def catch_all(path):
+    """Обрабатываем все остальные запросы как статические файлы"""
+    return send_from_directory('.', path)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    # Получаем порт из переменной окружения (для Render.com)
+    port = int(os.environ.get('PORT', 5000))
+    # Слушаем на всех интерфейсах (для production)
+    app.run(host='0.0.0.0', port=port, debug=False)
