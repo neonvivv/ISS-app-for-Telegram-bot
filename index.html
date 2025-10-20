@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ISS - Профиль пользователя</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>ISS</h1>
+            <p>Информационная система пользователя</p>
+        </header>
+
+        <div class="profile-card">
+            <div class="avatar-section">
+                <div class="avatar-placeholder">
+                    <span id="userInitials">?</span>
+                </div>
+            </div>
+
+            <div class="profile-info">
+                <div class="info-row">
+                    <label>Имя:</label>
+                    <span id="userName">Загрузка...</span>
+                </div>
+
+                <div class="info-row">
+                    <label>Username:</label>
+                    <span id="userUsername">Загрузка...</span>
+                </div>
+
+                <div class="info-row">
+                    <label>Возраст:</label>
+                    <span id="userAge">Не указан</span>
+                </div>
+
+                <div class="info-row">
+                    <label>Город:</label>
+                    <span id="userCity">Не указан</span>
+                </div>
+
+                <div class="info-row">
+                    <label>Дата регистрации:</label>
+                    <span id="userRegistrationDate">Загрузка...</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="stats-section">
+            <h2>Статистика использования</h2>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-number" id="totalReports">0</div>
+                    <div class="stat-label">Всего отчетов</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="activeReports">0</div>
+                    <div class="stat-label">Активных</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="resolvedReports">0</div>
+                    <div class="stat-label">Решенных</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="actions-section">
+            <button class="action-btn primary" onclick="closeApp()">
+                Закрыть профиль
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Инициализация Telegram Web App
+        let tg = window.Telegram.WebApp;
+        tg.ready();
+
+        // Получение данных пользователя через Telegram Web App API
+        let user = tg.initDataUnsafe?.user;
+
+        if (user) {
+            // Сначала получаем данные из Telegram
+            document.getElementById('userName').textContent = user.first_name + (user.last_name ? ' ' + user.last_name : '');
+            document.getElementById('userUsername').textContent = '@' + (user.username || 'не указан');
+
+            // Инициалы для аватара
+            let initials = user.first_name.charAt(0);
+            if (user.last_name) {
+                initials += user.last_name.charAt(0);
+            }
+            document.getElementById('userInitials').textContent = initials.toUpperCase();
+
+            // Получаем дополнительные данные через API
+            fetch(`/api/user-profile?user_id=${user.id}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (!data.error) {
+                        // Обновляем данные из базы данных
+                        document.getElementById('userAge').textContent = data.age;
+                        document.getElementById('userCity').textContent = data.city;
+                        document.getElementById('userRegistrationDate').textContent = new Date(data.registration_date).toLocaleDateString('ru-RU');
+
+                        // Статистика отчетов
+                        document.getElementById('totalReports').textContent = data.total_reports || 0;
+                        document.getElementById('activeReports').textContent = data.active_reports || 0;
+                        document.getElementById('resolvedReports').textContent = data.resolved_reports || 0;
+                    } else {
+                        console.log('API Error:', data.error);
+                        // Оставляем значения по умолчанию
+                        document.getElementById('userRegistrationDate').textContent = 'Загрузка...';
+                    }
+                })
+                .catch(error => {
+                    console.log('API request failed:', error);
+                    // Оставляем значения по умолчанию
+                    document.getElementById('userRegistrationDate').textContent = 'Загрузка...';
+                });
+        } else {
+            document.getElementById('userName').textContent = 'Пользователь не найден';
+            document.getElementById('userUsername').textContent = '—';
+        }
+
+        // Функция закрытия мини-приложения
+        function closeApp() {
+            tg.close();
+        }
+
+        // Установка темы в зависимости от Telegram
+        if (tg.colorScheme === 'dark') {
+            document.body.classList.add('dark-theme');
+        }
+    </script>
+</body>
+</html>

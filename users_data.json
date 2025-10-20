@@ -1,0 +1,13 @@
+{
+  "123456789": {
+    "name": "Тестовый Пользователь",
+    "username": "testuser",
+    "age": 25,
+    "city": "Москва",
+    "registration_date": "2024-01-15T10:30:00Z",
+    "setup_completed": true,
+    "total_reports": 15,
+    "active_reports": 3,
+    "resolved_reports": 12
+  }
+}
