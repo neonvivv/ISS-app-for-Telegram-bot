@@ -85,9 +85,16 @@ def get_user_profile():
         if reg_date_raw != 'Не указано' and str(reg_date_raw).isdigit():
             # Если это timestamp, конвертируем в дату
             import time
-            reg_date = time.strftime('%Y-%m-%d', time.localtime(int(reg_date_raw)))
+            # Проверяем, является ли timestamp в секундах или миллисекундах
+            timestamp = int(reg_date_raw)
+            if timestamp > 1e10:  # Если timestamp в миллисекундах
+                timestamp = timestamp / 1000
+            try:
+                reg_date = time.strftime('%d.%m.%Y', time.localtime(timestamp))
+            except:
+                reg_date = str(reg_date_raw)
         else:
-            reg_date = reg_date_raw
+            reg_date = str(reg_date_raw)
 
         # Формируем ответ с данными профиля
         profile_data = {
