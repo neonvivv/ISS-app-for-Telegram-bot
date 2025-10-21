@@ -3,8 +3,19 @@ from flask_cors import CORS
 import json
 import os
 from dotenv import load_dotenv
+import sys
 
 load_dotenv()
+
+# Добавляем путь к модулям
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'Modules'))
+
+try:
+    from arc_weather import get_weather_info
+    WEATHER_MODULE_AVAILABLE = True
+except ImportError:
+    WEATHER_MODULE_AVAILABLE = False
+    print("Warning: arc_weather module not available")
 
 app = Flask(__name__,
             static_folder='.',
@@ -98,6 +109,152 @@ def get_user_profile():
         import traceback
         traceback.print_exc()
         return jsonify({'error': str(e)}), 500
+
+@app.route('/api/weather', methods=['GET'])
+def get_weather():
+    """
+    API endpoint для получения данных о погоде
+    """
+    try:
+        if not WEATHER_MODULE_AVAILABLE:
+            return jsonify({'error': 'Weather module not available'}), 503
+
+        # Для демонстрации используем координаты Москвы
+        # В реальном приложении координаты должны приходить от пользователя
+        lat = 55.7558  # Москва
+        lon = 37.6173
+
+        # Импортируем asyncio для работы с асинхронной функцией
+        import asyncio
+
+        # Создаем event loop для выполнения асинхронной функции
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+
+        try:
+            weather_data = loop.run_until_complete(get_weather_info(lat, lon))
+
+            # Форматируем данные для Mini App
+            weather_info = {
+                'city': 'Москва',  # В будущем можно определять город по координатам
+                'temperature': weather_data['current_temp'],
+                'condition': weather_data['forecast']['day']['condition'].capitalize(),
+                'feels_like': weather_data['feels_like']
+            }
+
+            print(f"Weather API Response: {weather_info}")
+            return jsonify(weather_info)
+
+        finally:
+            loop.close()
+
+    except Exception as e:
+        print(f"Weather API Error: {str(e)}")
+        import traceback
+        traceback.print_exc()
+
+        # Возвращаем демо-данные в случае ошибки
+        return jsonify({
+            'city': 'Москва',
+            'temperature': 12,
+            'condition': 'Солнечно',
+            'feels_like': 10
+        })
+
+@app.route('/api/user-settings', methods=['GET'])
+def get_user_settings():
+    """
+    API endpoint для получения настроек пользователя
+    """
+    user_id = request.args.get('user_id')
+
+    if not user_id:
+        return jsonify({'error': 'user_id is required'}), 400
+
+    try:
+        # Загружаем данные пользователей
+        if os.path.exists(USERS_DATA_FILE):
+            with open(USERS_DATA_FILE, 'r', encoding='utf-8') as f:
+                users_data = json.load(f)
+        else:
+            return jsonify({'error': 'User data not found'}), 404
+
+        # Ищем пользователя
+        if user_id not in users_data:
+            # Возвращаем настройки по умолчанию для новых пользователей
+            return jsonify({
+                'streaming_enabled': True,
+                'updates_enabled': True,
+                'changes_enabled': True,
+                'promo_enabled': True
+            })
+
+        user_data = users_data[user_id]
+
+        # Возвращаем настройки пользователя
+        settings = {
+            'streaming_enabled': user_data.get('streaming_enabled', True),
+            'updates_enabled': user_data.get('updates_enabled', True),
+            'changes_enabled': user_data.get('changes_enabled', True),
+            'promo_enabled': user_data.get('promo_enabled', True)
+        }
+
+        print(f"Settings API Response: {settings}")
+        return jsonify(settings)
+
+    except Exception as e:
+        print(f"Settings API Error: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/user-settings', methods=['POST'])
+def update_user_settings():
+    """
+    API endpoint для обновления настроек пользователя
+    """
+    try:
+        data = request.get_json()
+
+        if not data or 'user_id' not in data or 'setting' not in data:
+            return jsonify({'error': 'user_id, setting, and value are required'}), 400
+
+        user_id = data['user_id']
+        setting = data['setting']
+        value = data['value']
+
+        # Загружаем данные пользователей
+        if os.path.exists(USERS_DATA_FILE):
+            with open(USERS_DATA_FILE, 'r', encoding='utf-8') as f:
+                users_data = json.load(f)
+        else:
+            return jsonify({'error': 'User data not found'}), 404
+
+        # Инициализируем данные пользователя, если их нет
+        if user_id not in users_data:
+            users_data[user_id] = {}
+
+        # Обновляем настройку
+        users_data[user_id][setting] = value
+
+        # Сохраняем обновленные данные
+        with open(USERS_DATA_FILE, 'w', encoding='utf-8') as f:
+            json.dump(users_data, f, ensure_ascii=False, indent=2)
+
+        print(f"Settings updated for user {user_id}: {setting} = {value}")
+        return jsonify({'success': True})
+
+    except Exception as e:
+        print(f"Settings Update API Error: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/points')
+def points():
+    """Отдаем страницу Points"""
+    return send_from_directory('.', 'points.html')
+
+@app.route('/settings')
+def settings():
+    """Отдаем страницу Settings"""
+    return send_from_directory('.', 'settings.html')
 
 @app.route('/')
 def index():

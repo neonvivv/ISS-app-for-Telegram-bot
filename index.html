@@ -8,91 +8,113 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
-    <div class="container">
-        <header class="header">
-            <h1>ISS</h1>
-            <p>Информационная система пользователя</p>
-        </header>
+    <!-- Шапка -->
+    <header class="header">
+        <img src="src/iss.svg" alt="ISS Logo" class="logo">
+    </header>
 
-        <div class="profile-card">
-            <div class="avatar-section">
-                <div class="avatar-placeholder">
-                    <span id="userInitials">?</span>
+    <!-- Основной контент -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Блоки с информацией -->
+            <div class="info-blocks">
+                <!-- Блок с очками -->
+                <div class="info-block">
+                    <div class="block-header">
+                        <span class="block-title">Points</span>
+                        <img src="src/points.svg" alt="Points" class="block-icon">
+                    </div>
+                    <div class="block-value">60</div>
+                </div>
+
+                <!-- Блок с погодой -->
+                <div class="info-block weather-block">
+                    <div class="block-header">
+                        <span class="block-title" id="weatherCity">Загрузка...</span>
+                    </div>
+                    <div class="block-value" id="weatherTemp">--°</div>
+                    <div class="block-condition" id="weatherCondition">Загрузка...</div>
                 </div>
             </div>
 
-            <div class="profile-info">
-                <div class="info-row">
-                    <label>Имя:</label>
-                    <span id="userName">Загрузка...</span>
-                </div>
+            <!-- Профиль ISS -->
+            <div class="profile-section">
+                <h1 class="user-name" id="issName">Загрузка...</h1>
+                <p class="user-username" id="issUsername">@загрузка</p>
 
-                <div class="info-row">
-                    <label>Username:</label>
-                    <span id="userUsername">Загрузка...</span>
-                </div>
-
-                <div class="info-row">
-                    <label>Возраст:</label>
-                    <span id="userAge">Не указан</span>
-                </div>
-
-                <div class="info-row">
-                    <label>Город:</label>
-                    <span id="userCity">Не указан</span>
-                </div>
-
-                <div class="info-row">
-                    <label>Дата регистрации:</label>
-                    <span id="userRegistrationDate">Загрузка...</span>
+                <div class="about-section">
+                    <h2>Обо мне</h2>
+                    <div class="about-info">
+                        <p><span class="label">Город:</span> <span id="issCity">Не указан</span></p>
+                        <p><span class="label">Дата регистрации:</span> <span id="issRegistrationDate">Загрузка...</span></p>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div class="stats-section">
-            <h2>Статистика использования</h2>
-            <div class="stats-grid">
-                <div class="stat-item">
-                    <div class="stat-number" id="totalReports">0</div>
-                    <div class="stat-label">Всего отчетов</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number" id="activeReports">0</div>
-                    <div class="stat-label">Активных</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number" id="resolvedReports">0</div>
-                    <div class="stat-label">Решенных</div>
+            <!-- Разделитель -->
+            <div class="divider">
+                <span>Информация из Telegram</span>
+            </div>
+
+            <!-- Информация из Telegram -->
+            <div class="telegram-section">
+                <div class="telegram-info">
+                    <p><span class="label">Имя:</span> <span id="telegramName">Загрузка...</span></p>
+                    <p><span class="label">Username:</span> <span id="telegramUsername">Загрузка...</span></p>
                 </div>
             </div>
-        </div>
 
-        <div class="actions-section">
-            <button class="action-btn primary" onclick="closeApp()">
-                Закрыть профиль
-            </button>
+            <!-- Кнопка поделиться -->
+            <div class="share-section">
+                <button class="share-btn" onclick="shareProfile()">
+                    Поделиться профилем
+                </button>
+            </div>
         </div>
-    </div>
+    </main>
+
+    <!-- Нижний бар -->
+    <nav class="bottom-nav">
+        <button class="nav-btn active" onclick="navigateTo('home')">
+            <span class="nav-icon">🏠</span>
+            <span class="nav-text">Главная</span>
+        </button>
+        <button class="nav-btn" onclick="navigateTo('points')">
+            <span class="nav-icon">🏆</span>
+            <span class="nav-text">Points</span>
+        </button>
+        <button class="nav-btn" onclick="navigateTo('settings')">
+            <span class="nav-icon">⚙️</span>
+            <span class="nav-text">Настройки</span>
+        </button>
+    </nav>
 
     <script>
         // Инициализация Telegram Web App
         let tg = window.Telegram.WebApp;
         tg.ready();
 
+        // Функции навигации
+        function navigateTo(page) {
+            if (page === 'home') {
+                window.location.href = '/';
+            } else if (page === 'points') {
+                window.location.href = '/points';
+            } else if (page === 'settings') {
+                window.location.href = '/settings';
+            }
+        }
+
         // Получение данных пользователя через Telegram Web App API
         let user = tg.initDataUnsafe?.user;
 
         if (user) {
-            // Сначала получаем данные из Telegram
-            document.getElementById('userName').textContent = user.first_name + (user.last_name ? ' ' + user.last_name : '');
-            document.getElementById('userUsername').textContent = '@' + (user.username || 'не указан');
+            // Данные из Telegram
+            const telegramName = user.first_name + (user.last_name ? ' ' + user.last_name : '');
+            const telegramUsername = '@' + (user.username || 'не указан');
 
-            // Инициалы для аватара
-            let initials = user.first_name.charAt(0);
-            if (user.last_name) {
-                initials += user.last_name.charAt(0);
-            }
-            document.getElementById('userInitials').textContent = initials.toUpperCase();
+            document.getElementById('telegramName').textContent = telegramName;
+            document.getElementById('telegramUsername').textContent = telegramUsername;
 
             // Получаем дополнительные данные через API
             fetch(`/api/user-profile?user_id=${user.id}`)
@@ -103,34 +125,83 @@
                 .then(data => {
                     console.log('API Response data:', data);
                     if (!data.error) {
-                        // Обновляем данные из базы данных
-                        document.getElementById('userAge').textContent = data.age;
-                        document.getElementById('userCity').textContent = data.city;
-                        document.getElementById('userRegistrationDate').textContent = new Date(data.registration_date).toLocaleDateString('ru-RU');
-
-                        // Статистика отчетов
-                        document.getElementById('totalReports').textContent = data.total_reports || 0;
-                        document.getElementById('activeReports').textContent = data.active_reports || 0;
-                        document.getElementById('resolvedReports').textContent = data.resolved_reports || 0;
+                        // Данные из профиля ISS
+                        document.getElementById('issName').textContent = data.name;
+                        document.getElementById('issUsername').textContent = '@' + (data.username || 'не указан');
+                        document.getElementById('issCity').textContent = data.city;
+                        document.getElementById('issRegistrationDate').textContent = new Date(data.registration_date).toLocaleDateString('ru-RU');
                     } else {
                         console.log('API Error:', data.error);
                         // Оставляем значения по умолчанию
-                        document.getElementById('userRegistrationDate').textContent = 'Ошибка загрузки';
+                        document.getElementById('issName').textContent = 'Пользователь';
+                        document.getElementById('issUsername').textContent = '@неизвестен';
+                        document.getElementById('issRegistrationDate').textContent = 'Неизвестно';
                     }
                 })
                 .catch(error => {
                     console.log('API request failed:', error);
                     // Оставляем значения по умолчанию
-                    document.getElementById('userRegistrationDate').textContent = 'Ошибка загрузки';
+                    document.getElementById('issName').textContent = 'Пользователь';
+                    document.getElementById('issUsername').textContent = '@неизвестен';
+                    document.getElementById('issRegistrationDate').textContent = 'Неизвестно';
+                });
+
+            // Получаем данные о погоде
+            fetch('/api/weather')
+                .then(response => {
+                    console.log('Weather API Response status:', response.status);
+                    return response.json();
+                })
+                .then(weatherData => {
+                    console.log('Weather API Response data:', weatherData);
+                    if (!weatherData.error) {
+                        document.getElementById('weatherCity').textContent = weatherData.city;
+                        document.getElementById('weatherTemp').textContent = weatherData.temperature + '°';
+                        document.getElementById('weatherCondition').textContent = weatherData.condition;
+                    } else {
+                        console.log('Weather API Error:', weatherData.error);
+                        // Значения по умолчанию
+                        document.getElementById('weatherCity').textContent = 'Москва';
+                        document.getElementById('weatherTemp').textContent = '12°';
+                        document.getElementById('weatherCondition').textContent = 'Солнечно';
+                    }
+                })
+                .catch(error => {
+                    console.log('Weather API request failed:', error);
+                    // Значения по умолчанию
+                    document.getElementById('weatherCity').textContent = 'Москва';
+                    document.getElementById('weatherTemp').textContent = '12°';
+                    document.getElementById('weatherCondition').textContent = 'Солнечно';
                 });
         } else {
-            document.getElementById('userName').textContent = 'Пользователь не найден';
-            document.getElementById('userUsername').textContent = '—';
+            document.getElementById('telegramName').textContent = 'Пользователь не найден';
+            document.getElementById('telegramUsername').textContent = '—';
+            document.getElementById('issName').textContent = 'Пользователь';
+            document.getElementById('issUsername').textContent = '@неизвестен';
         }
 
-        // Функция закрытия мини-приложения
-        function closeApp() {
-            tg.close();
+        // Функция поделиться профилем
+        function shareProfile() {
+            const userName = document.getElementById('issName').textContent;
+            const userUsername = document.getElementById('issUsername').textContent;
+            const shareText = `Посмотрите профиль ${userName} ${userUsername} в ISS!`;
+
+            if (tg.initDataUnsafe?.user) {
+                tg.showPopup({
+                    title: 'Поделиться профилем',
+                    message: shareText,
+                    buttons: [
+                        {id: 'share', type: 'default', text: 'Поделиться'},
+                        {id: 'cancel', type: 'cancel'}
+                    ]
+                }, function(buttonId) {
+                    if (buttonId === 'share') {
+                        tg.shareUrl('https://t.me/share/url?url=' + encodeURIComponent(window.location.href) + '&text=' + encodeURIComponent(shareText));
+                    }
+                });
+            } else {
+                tg.showAlert('Не удалось получить данные пользователя');
+            }
         }
 
         // Установка темы в зависимости от Telegram
