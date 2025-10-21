@@ -38,36 +38,32 @@
             </div>
 
             <!-- Профиль ISS -->
-            <div class="profile-section">
-                <h1 class="user-name" id="issName">Загрузка...</h1>
-                <p class="user-username" id="issUsername">@загрузка</p>
-
-                <div class="about-section">
-                    <h2>Обо мне</h2>
-                    <div class="about-info">
-                        <p><span class="label">Город:</span> <span id="issCity">Не указан</span></p>
-                        <p><span class="label">Дата регистрации:</span> <span id="issRegistrationDate">Загрузка...</span></p>
-                    </div>
+            <div class="profile-block">
+                <div class="profile-header">
+                    <div class="profile-name" id="issName">Загрузка...</div>
+                    <div class="profile-username" id="issUsername">@загрузка</div>
+                </div>
+                <div class="profile-details">
+                    <span class="label">Дата регистрации:</span> <span id="issRegistrationDate">Загрузка...</span>
                 </div>
             </div>
 
-            <!-- Разделитель -->
-            <div class="divider">
-                <span>Информация из Telegram</span>
-            </div>
-
-            <!-- Информация из Telegram -->
-            <div class="telegram-section">
+            <!-- Профиль Telegram -->
+            <div class="telegram-block">
                 <div class="telegram-info">
                     <p><span class="label">Имя:</span> <span id="telegramName">Загрузка...</span></p>
                     <p><span class="label">Username:</span> <span id="telegramUsername">Загрузка...</span></p>
+                    <p><span class="label">ID аккаунта:</span> <span id="telegramId">Загрузка...</span></p>
                 </div>
             </div>
 
-            <!-- Кнопка поделиться -->
-            <div class="share-section">
-                <button class="share-btn" onclick="shareProfile()">
-                    Поделиться профилем
+            <!-- Кнопки действий -->
+            <div class="action-buttons">
+                <button class="action-btn edit-btn" onclick="editProfile()">
+                    ✏️ Редактировать профиль
+                </button>
+                <button class="action-btn share-btn" onclick="shareProfile()">
+                    📤 Поделиться профилем
                 </button>
             </div>
         </div>
@@ -112,9 +108,11 @@
             // Данные из Telegram
             const telegramName = user.first_name + (user.last_name ? ' ' + user.last_name : '');
             const telegramUsername = '@' + (user.username || 'не указан');
+            const telegramId = user.id;
 
             document.getElementById('telegramName').textContent = telegramName;
             document.getElementById('telegramUsername').textContent = telegramUsername;
+            document.getElementById('telegramId').textContent = telegramId;
 
             // Получаем дополнительные данные через API
             fetch(`/api/user-profile?user_id=${user.id}`)
@@ -182,26 +180,36 @@
 
         // Функция поделиться профилем
         function shareProfile() {
-            const userName = document.getElementById('issName').textContent;
-            const userUsername = document.getElementById('issUsername').textContent;
-            const shareText = `Посмотрите профиль ${userName} ${userUsername} в ISS!`;
+            // Получаем username из профиля ISS
+            const username = document.getElementById('issUsername').textContent.replace('@', '');
+            if (username && username !== 'загрузка' && username !== 'неизвестен') {
+                const botUsername = "Intelligence_playground_bot";
+                const profileLink = `https://t.me/${botUsername}?start=profile_${username}`;
 
-            if (tg.initDataUnsafe?.user) {
-                tg.showPopup({
-                    title: 'Поделиться профилем',
-                    message: shareText,
-                    buttons: [
-                        {id: 'share', type: 'default', text: 'Поделиться'},
-                        {id: 'cancel', type: 'cancel'}
-                    ]
-                }, function(buttonId) {
-                    if (buttonId === 'share') {
-                        tg.shareUrl('https://t.me/share/url?url=' + encodeURIComponent(window.location.href) + '&text=' + encodeURIComponent(shareText));
-                    }
-                });
+                if (tg.initDataUnsafe?.user) {
+                    tg.showPopup({
+                        title: 'Поделиться профилем',
+                        message: 'Ссылка на ваш профиль в ISS:',
+                        buttons: [
+                            {id: 'share', type: 'default', text: 'Поделиться'},
+                            {id: 'cancel', type: 'cancel'}
+                        ]
+                    }, function(buttonId) {
+                        if (buttonId === 'share') {
+                            tg.shareUrl(profileLink);
+                        }
+                    });
+                } else {
+                    tg.showAlert('Не удалось получить данные пользователя');
+                }
             } else {
-                tg.showAlert('Не удалось получить данные пользователя');
+                tg.showAlert('Установите username в профиле, чтобы поделиться им');
             }
+        }
+
+        // Функция редактировать профиль
+        function editProfile() {
+            tg.showAlert('Функция редактирования профиля доступна в боте через команду /profile');
         }
 
         // Установка темы в зависимости от Telegram

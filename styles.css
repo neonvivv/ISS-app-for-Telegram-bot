@@ -16,11 +16,11 @@ body {
 /* Основной контент */
 .main-content {
     padding: 20px;
-    padding-bottom: 100px; /* Отступ для нижнего меню */
+    padding-bottom: 120px; /* Увеличенный отступ для нижнего меню */
 }
 
 .container {
-    max-width: 400px;
+    max-width: 100%; /* Полная ширина */
     margin: 0 auto;
     padding: 0 20px;
 }
@@ -96,72 +96,48 @@ body {
     text-transform: capitalize;
 }
 
-/* Профиль ISS */
-.profile-section {
-    margin-bottom: 40px;
+/* Блок профиля ISS (на всю ширину) */
+.profile-block {
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
 }
 
-.user-name {
-    font-size: 32px;
-    font-weight: 200;
-    text-align: center;
+.profile-header {
+    margin-bottom: 16px;
+}
+
+.profile-name {
+    font-size: 28px;
+    font-weight: 300;
+    color: #ffffff;
     margin-bottom: 8px;
     letter-spacing: -0.5px;
 }
 
-.user-username {
+.profile-username {
     font-size: 18px;
     color: #cccccc;
-    text-align: center;
-    margin-bottom: 30px;
+    letter-spacing: 0.5px;
 }
 
-.about-section h2 {
-    font-size: 20px;
-    font-weight: 300;
-    margin-bottom: 15px;
-    color: #ffffff;
-}
-
-.about-info p {
-    margin-bottom: 8px;
+.profile-details {
     font-size: 16px;
-}
-
-.label {
     color: #cccccc;
-    font-weight: 400;
 }
 
-/* Разделитель */
-.divider {
-    position: relative;
-    text-align: center;
-    margin: 40px 0;
-    color: #666666;
-    font-size: 14px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-.divider::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background-color: #333333;
-}
-
-.divider span {
-    background-color: #000000;
-    padding: 0 15px;
-}
-
-/* Информация из Telegram */
-.telegram-section {
-    margin-bottom: 40px;
+/* Блок профиля Telegram */
+.telegram-block {
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 30px;
 }
 
 .telegram-info p {
@@ -169,30 +145,63 @@ body {
     font-size: 16px;
 }
 
-/* Кнопка поделиться */
-.share-section {
-    margin-top: 40px;
+.telegram-info p:last-child {
+    margin-bottom: 0;
+}
+
+/* Кнопки действий */
+.action-buttons {
+    display: flex;
+    gap: 12px;
+    margin-top: 30px;
+}
+
+.action-btn {
+    flex: 1;
+    background-color: rgba(255, 255, 255, 0.05);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 16px 20px;
+    font-size: 16px;
+    font-weight: 500;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.action-btn:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.action-btn:active {
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+.edit-btn {
+    background-color: rgba(59, 130, 246, 0.1);
+    border-color: rgba(59, 130, 246, 0.3);
+    color: #60a5fa;
+}
+
+.edit-btn:hover {
+    background-color: rgba(59, 130, 246, 0.2);
+    border-color: rgba(59, 130, 246, 0.4);
 }
 
 .share-btn {
-    width: 100%;
-    background-color: #ffffff;
-    color: #000000;
-    border: none;
-    padding: 16px 24px;
-    font-size: 16px;
-    font-weight: 500;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
+    background-color: rgba(34, 197, 94, 0.1);
+    border-color: rgba(34, 197, 94, 0.3);
+    color: #4ade80;
 }
 
 .share-btn:hover {
-    background-color: #f0f0f0;
-}
-
-.share-btn:active {
-    background-color: #e0e0e0;
+    background-color: rgba(34, 197, 94, 0.2);
+    border-color: rgba(34, 197, 94, 0.4);
 }
 
 /* Темная тема (если Telegram использует темную тему) */
@@ -212,8 +221,9 @@ body {
     border-top: 1px solid rgba(255, 255, 255, 0.1);
     display: flex;
     justify-content: space-around;
-    padding: 8px 0;
+    padding: 16px 0; /* Увеличенный padding */
     z-index: 1000;
+    height: 80px; /* Фиксированная высота */
 }
 
 .nav-btn {
@@ -222,12 +232,13 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 8px 16px;
+    padding: 12px 20px; /* Увеличенный padding */
     border-radius: 12px;
     transition: all 0.2s ease;
     color: #cccccc;
     font-size: 12px;
-    min-width: 60px;
+    min-width: 80px; /* Увеличенная минимальная ширина */
+    min-height: 60px; /* Минимальная высота */
 }
 
 .nav-btn.active {
@@ -240,12 +251,12 @@ body {
 }
 
 .nav-icon {
-    font-size: 18px;
-    margin-bottom: 2px;
+    font-size: 24px; /* Увеличенный размер иконки */
+    margin-bottom: 4px; /* Увеличенный отступ */
 }
 
 .nav-text {
-    font-size: 10px;
+    font-size: 12px; /* Увеличенный размер текста */
     font-weight: 500;
 }
 
@@ -400,20 +411,39 @@ body {
 /* Адаптивность для меню и вкладок */
 @media (max-width: 480px) {
     .bottom-nav {
-        padding: 6px 0;
+        padding: 12px 0;
+        height: 70px;
     }
 
     .nav-btn {
-        padding: 6px 12px;
-        min-width: 50px;
+        padding: 8px 16px;
+        min-width: 70px;
+        min-height: 50px;
     }
 
     .nav-icon {
-        font-size: 16px;
+        font-size: 20px;
     }
 
     .nav-text {
-        font-size: 9px;
+        font-size: 11px;
+    }
+
+    .profile-name {
+        font-size: 24px;
+    }
+
+    .profile-username {
+        font-size: 16px;
+    }
+
+    .profile-block {
+        padding: 20px;
+        align-items: flex-start;
+    }
+
+    .telegram-block {
+        padding: 16px;
     }
 
     .points-number {
